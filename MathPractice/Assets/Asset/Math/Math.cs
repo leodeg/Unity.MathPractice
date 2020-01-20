@@ -26,6 +26,11 @@ namespace LeoDeg.Math
 
 		}
 
+		static public Coords Direction (Coords current, Coords target)
+		{
+			return new Coords (target.x - current.x, target.y - current.y, target.z - current.z);
+		}
+
 		static public float Square (float value)
 		{
 			return value * value;
@@ -72,7 +77,7 @@ namespace LeoDeg.Math
 			float xVal = vector.x * Mathf.Cos (angle) - vector.y * Mathf.Sin (angle);
 			float yVal = vector.x * Mathf.Sin (angle) + vector.y * Mathf.Cos (angle);
 			return new Coords (xVal, yVal, 0);
-		} 
+		}
 
 		static public Coords Translate (Coords position, Coords facing, Coords vector)
 		{
@@ -97,8 +102,17 @@ namespace LeoDeg.Math
 			float xMult = vector1.y * vector2.z - vector1.z * vector2.y;
 			float yMult = vector1.z * vector2.x - vector1.x * vector2.z;
 			float zMult = vector1.x * vector2.y - vector1.y * vector2.x;
-			Coords crossProd = new Coords (xMult, yMult, zMult);
-			return crossProd;
+			return new Coords (xMult, yMult, zMult);
+		}
+
+		static public Coords Lerp (Coords start, Coords end, float time)
+		{
+			time = Mathf.Clamp (time, 0, 1);
+			Coords vector = Direction (start, end);
+			float pointX = start.x + vector.x * time;
+			float pointY = start.y + vector.y * time;
+			float pointZ = start.z + vector.z * time;
+			return new Coords (pointX, pointY, pointZ);
 		}
 	}
 }
