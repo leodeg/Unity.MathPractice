@@ -10,6 +10,8 @@ namespace LeoDeg.Math
 {
 	public class Line
 	{
+		public enum LineType { Line, Segment, Ray }
+		[SerializeField] private LineType lineType;
 		private Coords start;
 		private Coords end;
 
@@ -19,61 +21,65 @@ namespace LeoDeg.Math
 		public Coords Start
 		{
 			get { return start; }
-			set 
-			{ 
+			set
+			{
 				start = value;
-				Vector = Math.Direction (Start, End);
+				Direction = Math.Direction (Start, End);
 			}
 		}
 
 		/// <summary>
 		/// End point of the line.
 		/// </summary>
-		public Coords End 
-		{ 
+		public Coords End
+		{
 			get { return end; }
 			set
 			{
 				end = value;
-				Vector = Math.Direction (Start, End);
+				Direction = Math.Direction (Start, End);
 			}
 		}
 
 		/// <summary>
 		/// Direction from the start point to the end point.
 		/// </summary>
-		public Coords Vector { get; private set; }
+		public Coords Direction { get; private set; }
 
-		public enum LineType { Line, Segment, Ray }
-		[SerializeField] private LineType lineType;
-
-		public Line (Coords pointA, Coords pointB)
+		public Line (Coords startPoint, Coords lineDirection)
 		{
-			this.Start = pointA;
-			this.End = pointB;
-			Vector = Math.Direction (Start, End);
+			Start = startPoint;
+			End = startPoint + lineDirection;
+			Direction = lineDirection;
 		}
 
-		public Line (Coords pointA, Coords pointB, LineType lineType) : this (pointA, pointB)
+		public Line (Coords start, Coords end, LineType lineType)
 		{
+			Start = start;
+			End = end;
 			this.lineType = lineType;
+			Direction = Math.Direction (Start, End);
 		}
 
-		public Coords GetPointAt (float time)
+		/// <summary>
+		/// Get point position at a time on the current line.
+		/// </summary>
+		public Coords Lerp (float time)
 		{
-			time = TimeClamp (time);
-			float pointX = Start.x + Vector.x * time;
-			float pointY = Start.y + Vector.y * time;
-			float pointZ = Start.z + Vector.z * time;
+			time = ClampTime (time);
+			float pointX = Start.x + Direction.x * time;
+			float pointY = Start.y + Direction.y * time;
+			float pointZ = Start.z + Direction.z * time;
 			return new Coords (pointX, pointY, pointZ);
 		}
 
-		private float TimeClamp (float time)
+		private float ClampTime (float time)
 		{
 			switch (lineType)
 			{
 				case LineType.Line:
 					return time;
+
 				case LineType.Segment:
 					if (time < 0) return 0;
 					else if (time > 1) return 1;
@@ -82,9 +88,10 @@ namespace LeoDeg.Math
 				case LineType.Ray:
 					if (time < 0) return 0;
 					return time;
-			}
 
-			throw new ArgumentOutOfRangeException ("Line::Error::Invalid Line type.");
+				default:
+					throw new ArgumentOutOfRangeException ("Line::Error::Invalid line type.");
+			}
 		}
 	}
 }
