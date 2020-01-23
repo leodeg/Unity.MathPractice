@@ -48,17 +48,30 @@ namespace LeoDeg.Math
 
 		public Line (Coords startPoint, Coords lineDirection)
 		{
-			Start = startPoint;
-			End = startPoint + lineDirection;
+			this.start = startPoint;
+			this.end = startPoint + lineDirection;
 			Direction = lineDirection;
 		}
 
 		public Line (Coords start, Coords end, LineType lineType)
 		{
-			Start = start;
-			End = end;
+			this.start = start;
+			this.end = end;
 			this.lineType = lineType;
 			Direction = Math.Direction (Start, End);
+		}
+
+		public float IntersectAt (Line other)
+		{
+			Coords directionToOtherStart = Math.Direction (this.Start, other.Start);
+			float dotToDirectionBetweenStarts = Math.Dot (Coords.Perp (other.Direction), directionToOtherStart);
+			float dotToCurrentDirection = Math.Dot (Coords.Perp (other.Direction), Direction);
+			return dotToDirectionBetweenStarts / dotToCurrentDirection;
+		}
+
+		public GameObject Draw (float width, Color color)
+		{
+			return Coords.DrawLine (Start, End, width, color);
 		}
 
 		/// <summary>
