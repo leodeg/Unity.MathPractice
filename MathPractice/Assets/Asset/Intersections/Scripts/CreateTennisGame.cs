@@ -61,7 +61,11 @@ public class CreateTennisGame : MonoBehaviour
 	{
 		if (tennisBall == null) return;
 		if (intersectionPosition == null) return;
+		MoveTennisBallToIntersectionPosition ();
+	}
 
+	private void MoveTennisBallToIntersectionPosition ()
+	{
 		float distanceToIntersection = Math.Distance (tennisBall.transform.position.ToCoords (), intersectionPosition.ToCoords ());
 		if (distanceToIntersection > stopTennisBallDistance)
 		{

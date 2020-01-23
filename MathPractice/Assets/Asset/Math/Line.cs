@@ -82,6 +82,16 @@ namespace LeoDeg.Math
 			return position;
 		}
 
+		public float IntersectAt (Plane plane)
+		{
+			Coords planeNormal = plane.Normal;
+			if (Math.Dot (planeNormal, Direction) == 0)
+				return float.NaN;
+
+			Coords directionToPlaneStart = Math.Direction (Start, plane.Start);
+			return Math.Dot (planeNormal, directionToPlaneStart) / Math.Dot (planeNormal, this.Direction);
+		}
+
 		public GameObject Draw (float width, Color color)
 		{
 			return Coords.DrawLine (Start, End, width, color);

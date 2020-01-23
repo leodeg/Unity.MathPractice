@@ -6,35 +6,37 @@ namespace LeoDeg.Math
 {
 	public class Plane
 	{
-		Coords start;
-		Coords firstPoint;
-		Coords secondPoint;
+		public Coords Start { get; private set; }
+		public Coords FirstVector { get; private set; }
+		public Coords SecondVector { get; private set; }
 
-		Coords u;
-		Coords v;
+		public Coords U { get; private set; }
+		public Coords V { get; private set; }
+
+		public Coords Normal { get { return Math.Cross (U, V);  } }
 
 		public Plane (Coords start, Coords firstPoint, Coords secondPoint)
 		{
-			this.start = start;
-			this.firstPoint = firstPoint;
-			this.secondPoint = secondPoint;
+			this.Start = start;
+			this.FirstVector = firstPoint;
+			this.SecondVector = secondPoint;
 
-			v = firstPoint - start;
-			u = secondPoint - start;
+			V = firstPoint - start;
+			U = secondPoint - start;
 		}
 
 		public Plane (Vector3 startPoint, Vector3 u, Vector3 v)
 		{
-			this.start = new Coords (startPoint.x, startPoint.y, startPoint.z);
-			this.u = new Coords (u.x, u.y, u.z);
-			this.v = new Coords (v.x, v.y, v.z);
+			this.Start = new Coords (startPoint.x, startPoint.y, startPoint.z);
+			this.U = new Coords (u.x, u.y, u.z);
+			this.V = new Coords (v.x, v.y, v.z);
 		}
 
 		public Coords Lerp (float s, float t)
 		{
-			float xst = start.x + v.x * s + u.x * t;
-			float yst = start.y + v.y * s + u.y * t;
-			float zst = start.z + v.z * s + u.z * t;
+			float xst = Start.x + V.x * s + U.x * t;
+			float yst = Start.y + V.y * s + U.y * t;
+			float zst = Start.z + V.z * s + U.z * t;
 			return new Coords (xst, yst, zst);
 		}
 	}
