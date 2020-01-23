@@ -11,7 +11,8 @@ namespace LeoDeg.Math
 	public class Line
 	{
 		public enum LineType { Line, Segment, Ray }
-		[SerializeField] private LineType lineType;
+		[SerializeField] private LineType type;
+
 		private Coords start;
 		private Coords end;
 
@@ -46,27 +47,39 @@ namespace LeoDeg.Math
 		/// </summary>
 		public Coords Direction { get; private set; }
 
-		public Line (Coords startPoint, Coords lineDirection)
+		public Line (Coords startPoint, Coords endPoint)
 		{
 			this.start = startPoint;
-			this.end = startPoint + lineDirection;
-			Direction = lineDirection;
+			this.end = startPoint + endPoint;
+			this.Direction = endPoint;
+			this.type = LineType.Segment;
 		}
 
-		public Line (Coords start, Coords end, LineType lineType)
+		public Line (Coords startPoint, Coords endPoint, LineType lineType)
 		{
-			this.start = start;
-			this.end = end;
-			this.lineType = lineType;
-			Direction = Math.Direction (Start, End);
+			this.start = startPoint;
+			this.end = endPoint;
+			this.type = lineType;
+			this.Direction = Math.Direction (Start, End);
 		}
 
+		/// <summary>
+		/// If lines is parallel to each other return float.Nan, otherwise return position at the current line.
+		/// </summary>
 		public float IntersectAt (Line other)
 		{
+			if (Math.Dot (Coords.Perp (other.Direction), this.Direction) == 0)
+				return float.NaN;
+
 			Coords directionToOtherStart = Math.Direction (this.Start, other.Start);
 			float dotToDirectionBetweenStarts = Math.Dot (Coords.Perp (other.Direction), directionToOtherStart);
 			float dotToCurrentDirection = Math.Dot (Coords.Perp (other.Direction), Direction);
-			return dotToDirectionBetweenStarts / dotToCurrentDirection;
+			float position = dotToDirectionBetweenStarts / dotToCurrentDirection;
+
+			if ((position < 0 || position > 1) && type == LineType.Segment)
+				return float.NaN;
+
+			return position;
 		}
 
 		public GameObject Draw (float width, Color color)
@@ -88,7 +101,7 @@ namespace LeoDeg.Math
 
 		private float ClampTime (float time)
 		{
-			switch (lineType)
+			switch (type)
 			{
 				case LineType.Line:
 					return time;

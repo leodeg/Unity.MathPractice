@@ -8,7 +8,7 @@ namespace LeoDeg.Math
 	{
 		static public Coords GetNormal (Coords vector)
 		{
-			float length = Distance (new Coords (0, 0, 0), vector);
+			float length = Distance (vector, new Coords (0, 0, 0));
 			vector.x /= length;
 			vector.y /= length;
 			vector.z /= length;
@@ -16,13 +16,12 @@ namespace LeoDeg.Math
 			return vector;
 		}
 
-		static public float Distance (Coords point1, Coords point2)
+		static public float Distance (Coords start, Coords target)
 		{
-			float diffSquared = Square (point1.x - point2.x) +
-								Square (point1.y - point2.y) +
-								Square (point1.z - point2.z);
-			float squareRoot = Mathf.Sqrt (diffSquared);
-			return squareRoot;
+			float diffSquared = Square (target.x - start.x) +
+								Square (target.y - start.y) +
+								Square (target.z - start.z);
+			return Mathf.Sqrt (diffSquared);
 
 		}
 
@@ -44,7 +43,7 @@ namespace LeoDeg.Math
 		static public float Angle (Coords vector1, Coords vector2)
 		{
 			float dotDivide = Dot (vector1, vector2) /
-						(Distance (new Coords (0, 0, 0), vector1) * Distance (new Coords (0, 0, 0), vector2));
+						(Distance (vector1, new Coords (0, 0, 0)) * Distance (vector2, new Coords (0, 0, 0)));
 			return Mathf.Acos (dotDivide); //radians.  For degrees * 180/Mathf.PI;
 		}
 
@@ -81,7 +80,7 @@ namespace LeoDeg.Math
 
 		static public Coords Translate (Coords position, Coords facing, Coords vector)
 		{
-			if (Math.Distance (new Coords (0, 0, 0), vector) <= 0) return position;
+			if (Math.Distance (vector, new Coords (0, 0, 0)) <= 0) return position;
 			float angle = Math.Angle (vector, facing);
 			float worldAngle = Math.Angle (vector, new Coords (0, 1, 0));
 
