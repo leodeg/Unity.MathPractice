@@ -6,6 +6,7 @@ using UnityEngine;
 
 namespace LeoDeg.Math
 {
+
 	public class Coords
 	{
 		public static readonly Coords zero = new Coords (0, 0, 0);
