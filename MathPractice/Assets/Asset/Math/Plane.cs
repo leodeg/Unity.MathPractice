@@ -13,7 +13,7 @@ namespace LeoDeg.Math
 		public Coords U { get; private set; }
 		public Coords V { get; private set; }
 
-		public Coords Normal { get { return Math.Cross (U, V);  } }
+		public Coords Normal { get { return Math.Cross (V, U);  } }
 
 		public Plane (Coords start, Coords firstPoint, Coords secondPoint)
 		{
@@ -34,9 +34,9 @@ namespace LeoDeg.Math
 
 		public Coords Lerp (float s, float t)
 		{
-			float xst = Start.x + V.x * s + U.x * t;
-			float yst = Start.y + V.y * s + U.y * t;
-			float zst = Start.z + V.z * s + U.z * t;
+			float xst = Start.X + V.X * s + U.X * t;
+			float yst = Start.Y + V.Y * s + U.Y * t;
+			float zst = Start.Z + V.Z * s + U.Z * t;
 			return new Coords (xst, yst, zst);
 		}
 	}

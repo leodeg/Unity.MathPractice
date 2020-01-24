@@ -8,54 +8,44 @@ namespace LeoDeg.Math
 {
 	public class Coords
 	{
-		public float x;
-		public float y;
-		public float z;
+		public static readonly Coords zero = new Coords (0, 0, 0);
+		public static readonly Coords up = new Coords (0, 1, 0);
+		public static readonly Coords down = new Coords (0, -1, 0);
+		public static readonly Coords right = new Coords (1, 0, 0);
+		public static readonly Coords left = new Coords (-1, 0, 0);
+		public static readonly Coords forward = new Coords (0, 0, 1);
+		public static readonly Coords backward = new Coords (0, 0, -1);
+
+		public float X { get; set; }
+		public float Y { get; set; }
+		public float Z { get; set; }
 
 		public Coords (float _X, float _Y)
 		{
-			x = _X;
-			y = _Y;
-			z = -1;
+			X = _X;
+			Y = _Y;
+			Z = -1;
 		}
 
 		public Coords (float _X, float _Y, float _Z)
 		{
-			x = _X;
-			y = _Y;
-			z = _Z;
+			X = _X;
+			Y = _Y;
+			Z = _Z;
 		}
 
 		public Coords (Vector3 vecpos)
 		{
-			x = vecpos.x;
-			y = vecpos.y;
-			z = vecpos.z;
+			X = vecpos.x;
+			Y = vecpos.y;
+			Z = vecpos.z;
 		}
 
-		public static Coords operator * (Coords a, float value)
-		{
-			return new Coords (a.x * value, a.y * value, a.z * value);
-		}
 
-		public static Coords operator / (Coords a, float value)
+		public Coords Normal ()
 		{
-			return new Coords (a.x / value, a.y / value, a.z / value);
-		}
-
-		public static Coords operator * (Coords a, Coords b)
-		{
-			return new Coords (a.x * b.x, a.y * b.y, a.z * b.z);
-		}
-
-		public static Coords operator + (Coords a, Coords b)
-		{
-			return new Coords (a.x + b.x, a.y + b.y, a.z + b.z);
-		}
-
-		public static Coords operator - (Coords a, Coords b)
-		{
-			return new Coords (a.x - b.x, a.y - b.y, a.z - b.z);
+			float magnitude = Math.Distance (Coords.zero, this);
+			return new Coords (X / magnitude, Y / magnitude, Z / magnitude);
 		}
 
 		/// <summary>
@@ -63,17 +53,47 @@ namespace LeoDeg.Math
 		/// </summary>
 		public static Coords Perp (Coords vector)
 		{
-			return new Coords (vector.y, -vector.x);
+			return new Coords (vector.Y, -vector.X);
 		}
 
-		public override string ToString ()
+		public static Coords operator / (Coords a, float value)
 		{
-			return "(" + x + "," + y + "," + z + ")";
+			return new Coords (a.X / value, a.Y / value, a.Z / value);
+		}
+
+		public static Coords operator * (Coords a, float value)
+		{
+			return new Coords (a.X * value, a.Y * value, a.Z * value);
+		}
+
+		public static Coords operator * (float value, Coords a)
+		{
+			return new Coords (a.X * value, a.Y * value, a.Z * value);
+		}
+
+		public static Coords operator * (Coords a, Coords b)
+		{
+			return new Coords (a.X * b.X, a.Y * b.Y, a.Z * b.Z);
+		}
+
+		public static Coords operator + (Coords a, Coords b)
+		{
+			return new Coords (a.X + b.X, a.Y + b.Y, a.Z + b.Z);
+		}
+
+		public static Coords operator - (Coords a, Coords b)
+		{
+			return new Coords (a.X - b.X, a.Y - b.Y, a.Z - b.Z);
 		}
 
 		public Vector3 ToVector ()
 		{
-			return new Vector3 (x, y, z);
+			return new Vector3 (X, Y, Z);
+		}
+
+		public override string ToString ()
+		{
+			return "(" + X + "," + Y + "," + Z + ")";
 		}
 
 		public static GameObject DrawLine (Coords startPoint, Coords endPoint, float width, Color colour)
@@ -83,8 +103,8 @@ namespace LeoDeg.Math
 			lineRenderer.material = new Material (Shader.Find ("Unlit/Color"));
 			lineRenderer.material.color = colour;
 			lineRenderer.positionCount = 2;
-			lineRenderer.SetPosition (0, new Vector3 (startPoint.x, startPoint.y, startPoint.z));
-			lineRenderer.SetPosition (1, new Vector3 (endPoint.x, endPoint.y, endPoint.z));
+			lineRenderer.SetPosition (0, new Vector3 (startPoint.X, startPoint.Y, startPoint.Z));
+			lineRenderer.SetPosition (1, new Vector3 (endPoint.X, endPoint.Y, endPoint.Z));
 			lineRenderer.startWidth = width;
 			lineRenderer.endWidth = width;
 			return line;
@@ -97,8 +117,8 @@ namespace LeoDeg.Math
 			lineRenderer.material = new Material (Shader.Find ("Unlit/Color"));
 			lineRenderer.material.color = colour;
 			lineRenderer.positionCount = 2;
-			lineRenderer.SetPosition (0, new Vector3 (position.x - width / 3.0f, position.y - width / 3.0f, position.z));
-			lineRenderer.SetPosition (1, new Vector3 (position.x + width / 3.0f, position.y + width / 3.0f, position.z));
+			lineRenderer.SetPosition (0, new Vector3 (position.X - width / 3.0f, position.Y - width / 3.0f, position.Z));
+			lineRenderer.SetPosition (1, new Vector3 (position.X + width / 3.0f, position.Y + width / 3.0f, position.Z));
 			lineRenderer.startWidth = width;
 			lineRenderer.endWidth = width;
 			return line;

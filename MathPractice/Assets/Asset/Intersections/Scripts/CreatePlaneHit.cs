@@ -16,9 +16,16 @@ namespace LeoDeg.Intersactions
 		[SerializeField] private float pointSize = 1.0f;
 		[SerializeField] private Color pointColor = Color.red;
 
+		[Header ("Ball Properties")]
+		[SerializeField] private float stopBallDistance = 0.3f;
+
 		private GameObject spheresParent;
 		private Math.Plane plane;
-		private Line line;
+
+		private Line trajectory;
+
+		private GameObject ball;
+		private Vector3 intersectionVector;
 
 		private const int ONE = 1;
 		private const float ONE_STEP = 0.1f;
@@ -28,7 +35,11 @@ namespace LeoDeg.Intersactions
 			InitializeVariables ();
 			CreateSpheresParent ();
 			CreatePlaneByUsingSpheres ();
-			DrawPointAtIntersectionPosition (CalculateIntersectionPosition (), pointSize, pointColor);
+
+			CalculateIntersectionPosition ();
+			InstantiateSphereAtPosition (intersectionVector, pointSize, pointColor);
+			ball = InstantiateSphereAtPosition (trajectory.Lerp (0.1f).ToVector (), pointSize, Color.yellow);
+			Debug.Break ();
 		}
 
 		private void InitializeVariables ()
@@ -36,10 +47,10 @@ namespace LeoDeg.Intersactions
 			plane = new Math.Plane (planeStart.position.ToCoords (),
 												planeFirstVector.position.ToCoords (),
 												planeSecondVector.position.ToCoords ());
-			line = new Line (lineStart.position.ToCoords (),
+			trajectory = new Line (lineStart.position.ToCoords (),
 							lineEnd.position.ToCoords (),
-							Line.LineType.Ray);
-			line.Draw (0.3f, Color.green);
+							Line.LineType.Segment);
+			trajectory.Draw (0.3f, Color.green);
 		}
 
 		private void CreateSpheresParent ()
@@ -61,24 +72,40 @@ namespace LeoDeg.Intersactions
 			}
 		}
 
-		private Vector3 CalculateIntersectionPosition ()
+		private void CalculateIntersectionPosition ()
 		{
-			float positionOnLine = line.IntersectAt (plane);
-			return line.Lerp (positionOnLine).ToVector ();
+			float intersectionAtLine = trajectory.IntersectAt (plane);
+			if (!float.IsNaN (intersectionAtLine))
+			{
+				intersectionVector = trajectory.Lerp (intersectionAtLine).ToVector ();
+			}
 		}
 
-		private void DrawPointAtIntersectionPosition (Vector3 position, float size, Color color)
+		private GameObject InstantiateSphereAtPosition (Vector3 position, float size, Color color)
 		{
 			GameObject sphere = GameObject.CreatePrimitive (PrimitiveType.Sphere);
 			sphere.transform.position = position;
 			sphere.transform.localScale *= size;
 			sphere.GetComponent<Renderer> ().material.color = color;
 			sphere.name = string.Format ("IntersectionSphere_{0}", position.ToString ());
+			return sphere;
 		}
 
 		void Update ()
 		{
-
+			float distanceToIntersection = Math.Math.Distance (ball.transform.position.ToCoords (), intersectionVector.ToCoords ());
+			if (distanceToIntersection > stopBallDistance)
+			{
+				Vector3 direction = intersectionVector - ball.transform.position;
+				Debug.Log ("Distance to Intersection: " + distanceToIntersection.ToString ());
+				ball.transform.Translate (direction * Time.deltaTime);
+			}
+			else
+			{
+				intersectionVector = trajectory.Reflect (plane.Normal).ToVector ().normalized;
+				Vector3 direction = intersectionVector - ball.transform.position;
+				ball.transform.Translate (direction * Time.deltaTime);
+			}
 		}
 	}
 }

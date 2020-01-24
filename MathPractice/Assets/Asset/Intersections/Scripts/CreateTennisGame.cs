@@ -12,7 +12,7 @@ public class CreateTennisGame : MonoBehaviour
 
 	private Line road;
 	private Line wall;
-	private Vector3 intersectionPosition;
+	private Vector3 movingVector;
 
 	void Start ()
 	{
@@ -52,25 +52,30 @@ public class CreateTennisGame : MonoBehaviour
 
 		if (!float.IsNaN (intersectionAtLine) && !float.IsNaN (intersectionAtWall))
 		{
-			intersectionPosition = Math.Lerp (road.Start, road.End, intersectionAtLine).ToVector ();
-			Debug.Log (intersectionPosition.ToString ());
+			movingVector = Math.Lerp (road.Start, road.End, intersectionAtLine).ToVector ();
+			Debug.Log (movingVector.ToString ());
 		}
 	}
 
 	void Update ()
 	{
 		if (tennisBall == null) return;
-		if (intersectionPosition == null) return;
+		if (movingVector == null) return;
 		MoveTennisBallToIntersectionPosition ();
 	}
 
 	private void MoveTennisBallToIntersectionPosition ()
 	{
-		float distanceToIntersection = Math.Distance (tennisBall.transform.position.ToCoords (), intersectionPosition.ToCoords ());
+		float distanceToIntersection = Math.Distance (tennisBall.transform.position.ToCoords (), movingVector.ToCoords ());
 		if (distanceToIntersection > stopTennisBallDistance)
 		{
 			Debug.Log ("Distance to intersection: " + distanceToIntersection);
-			tennisBall.transform.Translate (intersectionPosition * Time.deltaTime);
+			tennisBall.transform.position += movingVector * Time.deltaTime;
+		}
+		else
+		{
+			movingVector = road.Reflect (Coords.Perp (wall.Direction).Normal ()).ToVector ();
+			tennisBall.transform.position += movingVector * Time.deltaTime;
 		}
 	}
 }

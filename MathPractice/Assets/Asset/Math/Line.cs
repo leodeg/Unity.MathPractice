@@ -92,6 +92,15 @@ namespace LeoDeg.Math
 			return Math.Dot (planeNormal, directionToPlaneStart) / Math.Dot (planeNormal, this.Direction);
 		}
 
+		public Coords Reflect (Coords normal)
+		{
+			Coords directionNormal = Direction.Normal ();
+			float dot = Math.Dot (directionNormal, normal);
+			if (dot == 0) return this.Direction;
+
+			return directionNormal - (2.0f * Math.Dot (directionNormal, normal) * normal);
+		}
+
 		public GameObject Draw (float width, Color color)
 		{
 			return Coords.DrawLine (Start, End, width, color);
@@ -103,9 +112,9 @@ namespace LeoDeg.Math
 		public Coords Lerp (float time)
 		{
 			time = ClampTime (time);
-			float pointX = Start.x + Direction.x * time;
-			float pointY = Start.y + Direction.y * time;
-			float pointZ = Start.z + Direction.z * time;
+			float pointX = Start.X + Direction.X * time;
+			float pointY = Start.Y + Direction.Y * time;
+			float pointZ = Start.Z + Direction.Z * time;
 			return new Coords (pointX, pointY, pointZ);
 		}
 

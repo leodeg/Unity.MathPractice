@@ -9,25 +9,25 @@ namespace LeoDeg.Math
 		static public Coords GetNormal (Coords vector)
 		{
 			float length = Distance (vector, new Coords (0, 0, 0));
-			vector.x /= length;
-			vector.y /= length;
-			vector.z /= length;
+			vector.X /= length;
+			vector.Y /= length;
+			vector.Z /= length;
 
 			return vector;
 		}
 
 		static public float Distance (Coords start, Coords target)
 		{
-			float diffSquared = Square (target.x - start.x) +
-								Square (target.y - start.y) +
-								Square (target.z - start.z);
+			float diffSquared = Square (target.X - start.X) +
+								Square (target.Y - start.Y) +
+								Square (target.Z - start.Z);
 			return Mathf.Sqrt (diffSquared);
 
 		}
 
 		static public Coords Direction (Coords current, Coords target)
 		{
-			return new Coords (target.x - current.x, target.y - current.y, target.z - current.z);
+			return new Coords (target.X - current.X, target.Y - current.Y, target.Z - current.Z);
 		}
 
 		static public float Square (float value)
@@ -37,7 +37,7 @@ namespace LeoDeg.Math
 
 		static public float Dot (Coords vector1, Coords vector2)
 		{
-			return (vector1.x * vector2.x + vector1.y * vector2.y + vector1.z * vector2.z);
+			return (vector1.X * vector2.X + vector1.Y * vector2.Y + vector1.Z * vector2.Z);
 		}
 
 		static public float Angle (Coords vector1, Coords vector2)
@@ -49,11 +49,11 @@ namespace LeoDeg.Math
 
 		static public Coords LookAt2D (Coords forwardVector, Coords position, Coords focusPoint)
 		{
-			Coords direction = new Coords (focusPoint.x - position.x, focusPoint.y - position.y, position.z);
+			Coords direction = new Coords (focusPoint.X - position.X, focusPoint.Y - position.Y, position.Z);
 			float angle = Math.Angle (forwardVector, direction);
 
 			bool clockwise = false;
-			if (Math.Cross (forwardVector, direction).z < 0)
+			if (Math.Cross (forwardVector, direction).Z < 0)
 				clockwise = true;
 
 			Coords newDir = Math.Rotate (forwardVector, angle, clockwise);
@@ -73,8 +73,8 @@ namespace LeoDeg.Math
 				angle = 2 * Mathf.PI - angle;
 			}
 
-			float xVal = vector.x * Mathf.Cos (angle) - vector.y * Mathf.Sin (angle);
-			float yVal = vector.x * Mathf.Sin (angle) + vector.y * Mathf.Cos (angle);
+			float xVal = vector.X * Mathf.Cos (angle) - vector.Y * Mathf.Sin (angle);
+			float yVal = vector.X * Mathf.Sin (angle) + vector.Y * Mathf.Cos (angle);
 			return new Coords (xVal, yVal, 0);
 		}
 
@@ -85,22 +85,22 @@ namespace LeoDeg.Math
 			float worldAngle = Math.Angle (vector, new Coords (0, 1, 0));
 
 			bool clockwise = false;
-			if (Math.Cross (vector, facing).z < 0)
+			if (Math.Cross (vector, facing).Z < 0)
 				clockwise = true;
 
 			vector = Math.Rotate (vector, angle + worldAngle, clockwise);
 
-			float xVal = position.x + vector.x;
-			float yVal = position.y + vector.y;
-			float zVal = position.z + vector.z;
+			float xVal = position.X + vector.X;
+			float yVal = position.Y + vector.Y;
+			float zVal = position.Z + vector.Z;
 			return new Coords (xVal, yVal, zVal);
 		}
 
 		static public Coords Cross (Coords vector1, Coords vector2)
 		{
-			float xMult = vector1.y * vector2.z - vector1.z * vector2.y;
-			float yMult = vector1.z * vector2.x - vector1.x * vector2.z;
-			float zMult = vector1.x * vector2.y - vector1.y * vector2.x;
+			float xMult = vector1.Y * vector2.Z - vector1.Z * vector2.Y;
+			float yMult = vector1.Z * vector2.X - vector1.X * vector2.Z;
+			float zMult = vector1.X * vector2.Y - vector1.Y * vector2.X;
 			return new Coords (xMult, yMult, zMult);
 		}
 
@@ -108,9 +108,9 @@ namespace LeoDeg.Math
 		{
 			time = Mathf.Clamp (time, 0, 1);
 			Coords vector = Direction (start, end);
-			float pointX = start.x + vector.x * time;
-			float pointY = start.y + vector.y * time;
-			float pointZ = start.z + vector.z * time;
+			float pointX = start.X + vector.X * time;
+			float pointY = start.Y + vector.Y * time;
+			float pointZ = start.Z + vector.Z * time;
 			return new Coords (pointX, pointY, pointZ);
 		}
 	}
