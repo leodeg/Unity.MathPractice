@@ -37,7 +37,7 @@ namespace LeoDeg.Math
 
 		static public float Dot (Coords vector1, Coords vector2)
 		{
-			return (vector1.X * vector2.X + vector1.Y * vector2.Y + vector1.Z * vector2.Z);
+			return vector1.X * vector2.X + vector1.Y * vector2.Y + vector1.Z * vector2.Z;
 		}
 
 		static public float Angle (Coords vector1, Coords vector2)
@@ -56,8 +56,7 @@ namespace LeoDeg.Math
 			if (Math.Cross (forwardVector, direction).Z < 0)
 				clockwise = true;
 
-			Coords newDir = Math.Rotate (forwardVector, angle, clockwise);
-			return newDir;
+			return Math.Rotate (forwardVector, angle, clockwise);
 		}
 
 		/// <summary>
@@ -69,9 +68,7 @@ namespace LeoDeg.Math
 		static public Coords Rotate (Coords vector, float angle, bool clockwise) //in radians
 		{
 			if (clockwise)
-			{
 				angle = 2 * Mathf.PI - angle;
-			}
 
 			float xVal = vector.X * Mathf.Cos (angle) - vector.Y * Mathf.Sin (angle);
 			float yVal = vector.X * Mathf.Sin (angle) + vector.Y * Mathf.Cos (angle);
@@ -89,29 +86,34 @@ namespace LeoDeg.Math
 				clockwise = true;
 
 			vector = Math.Rotate (vector, angle + worldAngle, clockwise);
+			return new Coords (
+				position.X + vector.X,
+				position.Y + vector.Y,
+				position.Z + vector.Z);
+		}
 
-			float xVal = position.X + vector.X;
-			float yVal = position.Y + vector.Y;
-			float zVal = position.Z + vector.Z;
-			return new Coords (xVal, yVal, zVal);
+		static public Coords Translate (Coords start, Coords target)
+		{
+			Matrix resultPosition = start.ToTranslateMatrix () * target.ToMatrix ();
+			return resultPosition.ToCoords ();
 		}
 
 		static public Coords Cross (Coords vector1, Coords vector2)
 		{
-			float xMult = vector1.Y * vector2.Z - vector1.Z * vector2.Y;
-			float yMult = vector1.Z * vector2.X - vector1.X * vector2.Z;
-			float zMult = vector1.X * vector2.Y - vector1.Y * vector2.X;
-			return new Coords (xMult, yMult, zMult);
+			return new Coords (
+				vector1.Y * vector2.Z - vector1.Z * vector2.Y,
+				vector1.Z * vector2.X - vector1.X * vector2.Z,
+				vector1.X * vector2.Y - vector1.Y * vector2.X);
 		}
 
 		static public Coords Lerp (Coords start, Coords end, float time)
 		{
 			time = Mathf.Clamp (time, 0, 1);
 			Coords vector = Direction (start, end);
-			float pointX = start.X + vector.X * time;
-			float pointY = start.Y + vector.Y * time;
-			float pointZ = start.Z + vector.Z * time;
-			return new Coords (pointX, pointY, pointZ);
+			return new Coords (
+				start.X + vector.X * time,
+				start.Y + vector.Y * time,
+				start.Z + vector.Z * time);
 		}
 	}
 }
