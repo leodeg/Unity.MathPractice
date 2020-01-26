@@ -38,7 +38,7 @@ namespace LeoDeg.Intersactions
 
 			CalculateIntersectionPosition ();
 			InstantiateSphereAtPosition (intersectionVector, pointSize, pointColor);
-			ball = InstantiateSphereAtPosition (trajectory.Lerp (0.1f).ToVector (), pointSize, Color.yellow);
+			ball = InstantiateSphereAtPosition (trajectory.Lerp (0.1f).ToVector3 (), pointSize, Color.yellow);
 			Debug.Break ();
 		}
 
@@ -66,7 +66,7 @@ namespace LeoDeg.Intersactions
 				for (float t = 0; t < ONE; t += ONE_STEP)
 				{
 					GameObject sphere = GameObject.CreatePrimitive (PrimitiveType.Sphere);
-					sphere.transform.position = plane.Lerp (s, t).ToVector ();
+					sphere.transform.position = plane.Lerp (s, t).ToVector3 ();
 					sphere.transform.parent = spheresParent.transform;
 				}
 			}
@@ -77,7 +77,7 @@ namespace LeoDeg.Intersactions
 			float intersectionAtLine = trajectory.IntersectAt (plane);
 			if (!float.IsNaN (intersectionAtLine))
 			{
-				intersectionVector = trajectory.Lerp (intersectionAtLine).ToVector ();
+				intersectionVector = trajectory.Lerp (intersectionAtLine).ToVector3 ();
 			}
 		}
 
@@ -102,7 +102,7 @@ namespace LeoDeg.Intersactions
 			}
 			else
 			{
-				intersectionVector = trajectory.Reflect (plane.Normal).ToVector ().normalized;
+				intersectionVector = trajectory.Reflect (plane.Normal).ToVector3 ().normalized;
 				Vector3 direction = intersectionVector - ball.transform.position;
 				ball.transform.Translate (direction * Time.deltaTime);
 			}

@@ -92,10 +92,21 @@ namespace LeoDeg.Math
 				position.Z + vector.Z);
 		}
 
-		static public Coords Translate (Coords start, Coords target)
+		static public Coords Translate (Coords position, Coords vector)
 		{
-			Matrix resultPosition = start.ToTranslateMatrix () * target.ToMatrix ();
+			Matrix resultPosition = position.ToTranslationMatrix () * vector.ToMatrix ();
 			return resultPosition.ToCoords ();
+		}
+
+		static public Coords Scale (Coords position, float x, float y, float z)
+		{
+			return Scale (position, new Coords (x, y, z));
+		}
+
+		static public Coords Scale (Coords position, Coords scale)
+		{
+			Matrix resultScale = scale.ToScaleMatrix () * position.ToMatrix ();
+			return resultScale.ToCoords ();
 		}
 
 		static public Coords Cross (Coords vector1, Coords vector2)

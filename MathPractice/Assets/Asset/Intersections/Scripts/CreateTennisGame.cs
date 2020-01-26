@@ -52,7 +52,7 @@ public class CreateTennisGame : MonoBehaviour
 
 		if (!float.IsNaN (intersectionAtLine) && !float.IsNaN (intersectionAtWall))
 		{
-			movingVector = Math.Lerp (road.Start, road.End, intersectionAtLine).ToVector ();
+			movingVector = Math.Lerp (road.Start, road.End, intersectionAtLine).ToVector3 ();
 			Debug.Log (movingVector.ToString ());
 		}
 	}
@@ -74,7 +74,7 @@ public class CreateTennisGame : MonoBehaviour
 		}
 		else
 		{
-			movingVector = road.Reflect (Coords.Perp (wall.Direction).Normal ()).ToVector ();
+			movingVector = road.Reflect (Coords.Perp (wall.Direction).Normal ()).ToVector3 ();
 			tennisBall.transform.position += movingVector * Time.deltaTime;
 		}
 	}

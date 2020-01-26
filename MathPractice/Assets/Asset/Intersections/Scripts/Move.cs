@@ -22,7 +22,7 @@ namespace LeoDeg.Intersactions
 			//line = new Line (new Coords (start.position), new Coords (end.position));
 			//transform.position = line.GetPointAt (time).ToVector ();
 
-			transform.position = Math.Math.Lerp (new Coords (start.position), new Coords (end.position), time).ToVector ();
+			transform.position = Math.Math.Lerp (new Coords (start.position), new Coords (end.position), time).ToVector3 ();
 		}
 	}
 }

@@ -35,7 +35,7 @@ namespace LeoDeg.Intersactions
 				for (float t = 0; t < ONE; t += ONE_STEP)
 				{
 					GameObject sphere = GameObject.CreatePrimitive (PrimitiveType.Sphere);
-					sphere.transform.position = plane.Lerp (s, t).ToVector ();
+					sphere.transform.position = plane.Lerp (s, t).ToVector3 ();
 					sphere.transform.parent = spheresParent.transform;
 				}
 			}

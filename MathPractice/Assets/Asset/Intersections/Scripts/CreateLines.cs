@@ -38,7 +38,7 @@ namespace LeoDeg.Intersactions
 
 			if (!float.IsNaN (intersectAtFirst) && !float.IsNaN (intersectAtSecond))
 			{
-				Vector3 intersectionPosition = Math.Math.Lerp (first.Start, first.End, intersectAtFirst).ToVector ();
+				Vector3 intersectionPosition = Math.Math.Lerp (first.Start, first.End, intersectAtFirst).ToVector3 ();
 				CreatePointAt (intersectionPosition, 3f);
 			}
 		}

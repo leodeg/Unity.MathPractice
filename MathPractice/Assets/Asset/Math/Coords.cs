@@ -119,15 +119,15 @@ namespace LeoDeg.Math
 			return new Matrix (1, 4, this.ToArray ());
 		}
 
-		public Vector3 ToVector ()
+		public Vector3 ToVector3 ()
 		{
 			return new Vector3 (X, Y, Z);
 		}
 
 		/// <summary>
-		/// Return a vertical matrix. Rows count = 4, column count = 1.
+		/// Return a translate matrix. Rows count = 4, column count = 4.
 		/// </summary>
-		public Matrix ToTranslateMatrix ()
+		public Matrix ToTranslationMatrix ()
 		{
 			float[] translateValues = {
 				1,0,0, X,
@@ -137,6 +137,21 @@ namespace LeoDeg.Math
 			};
 
 			return new Matrix (4, 4, translateValues);
+		}
+
+		/// <summary>
+		/// Return a scale matrix. Rows count = 4, column count = 4.
+		/// </summary>
+		public Matrix ToScaleMatrix ()
+		{
+			float[] scaleValues = {
+				X,0,0, 0,
+				0,Y,0, 0,
+				0,0,Z, 0,
+				0,0,0, 1,
+			};
+
+			return new Matrix (4, 4, scaleValues);
 		}
 
 		public float[] ToArray ()
