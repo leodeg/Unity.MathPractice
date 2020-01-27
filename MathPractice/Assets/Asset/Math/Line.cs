@@ -13,13 +13,13 @@ namespace LeoDeg.Math
 		public enum LineType { Line, Segment, Ray }
 		[SerializeField] private LineType type;
 
-		private Coords start;
-		private Coords end;
+		private Vector start;
+		private Vector end;
 
 		/// <summary>
 		/// Start point of the line.
 		/// </summary>
-		public Coords Start
+		public Vector Start
 		{
 			get { return start; }
 			set
@@ -32,7 +32,7 @@ namespace LeoDeg.Math
 		/// <summary>
 		/// End point of the line.
 		/// </summary>
-		public Coords End
+		public Vector End
 		{
 			get { return end; }
 			set
@@ -45,9 +45,9 @@ namespace LeoDeg.Math
 		/// <summary>
 		/// Direction from the start point to the end point.
 		/// </summary>
-		public Coords Direction { get; private set; }
+		public Vector Direction { get; private set; }
 
-		public Line (Coords startPoint, Coords endPoint)
+		public Line (Vector startPoint, Vector endPoint)
 		{
 			this.start = startPoint;
 			this.end = startPoint + endPoint;
@@ -55,7 +55,7 @@ namespace LeoDeg.Math
 			this.type = LineType.Segment;
 		}
 
-		public Line (Coords startPoint, Coords endPoint, LineType lineType)
+		public Line (Vector startPoint, Vector endPoint, LineType lineType)
 		{
 			this.start = startPoint;
 			this.end = endPoint;
@@ -68,12 +68,12 @@ namespace LeoDeg.Math
 		/// </summary>
 		public float IntersectAt (Line other)
 		{
-			if (Math.Dot (Coords.Perp (other.Direction), this.Direction) == 0)
+			if (Math.Dot (Vector.Perp (other.Direction), this.Direction) == 0)
 				return float.NaN;
 
-			Coords directionToOtherStart = Math.Direction (this.Start, other.Start);
-			float dotToDirectionBetweenStarts = Math.Dot (Coords.Perp (other.Direction), directionToOtherStart);
-			float dotToCurrentDirection = Math.Dot (Coords.Perp (other.Direction), Direction);
+			Vector directionToOtherStart = Math.Direction (this.Start, other.Start);
+			float dotToDirectionBetweenStarts = Math.Dot (Vector.Perp (other.Direction), directionToOtherStart);
+			float dotToCurrentDirection = Math.Dot (Vector.Perp (other.Direction), Direction);
 			float position = dotToDirectionBetweenStarts / dotToCurrentDirection;
 
 			if ((position < 0 || position > 1) && type == LineType.Segment)
@@ -84,17 +84,17 @@ namespace LeoDeg.Math
 
 		public float IntersectAt (Plane plane)
 		{
-			Coords planeNormal = plane.Normal;
+			Vector planeNormal = plane.Normal;
 			if (Math.Dot (planeNormal, Direction) == 0)
 				return float.NaN;
 
-			Coords directionToPlaneStart = Math.Direction (Start, plane.Start);
+			Vector directionToPlaneStart = Math.Direction (Start, plane.Start);
 			return Math.Dot (planeNormal, directionToPlaneStart) / Math.Dot (planeNormal, this.Direction);
 		}
 
-		public Coords Reflect (Coords normal)
+		public Vector Reflect (Vector normal)
 		{
-			Coords directionNormal = Direction.Normal ();
+			Vector directionNormal = Direction.Normal ();
 			float dot = Math.Dot (directionNormal, normal);
 			if (dot == 0) return this.Direction;
 
@@ -103,19 +103,19 @@ namespace LeoDeg.Math
 
 		public GameObject Draw (float width, Color color)
 		{
-			return Coords.DrawLine (Start, End, width, color);
+			return Vector.DrawLine (Start, End, width, color);
 		}
 
 		/// <summary>
 		/// Get point position at a time on the current line.
 		/// </summary>
-		public Coords Lerp (float time)
+		public Vector Lerp (float time)
 		{
 			time = ClampTime (time);
 			float pointX = Start.X + Direction.X * time;
 			float pointY = Start.Y + Direction.Y * time;
 			float pointZ = Start.Z + Direction.Z * time;
-			return new Coords (pointX, pointY, pointZ);
+			return new Vector (pointX, pointY, pointZ);
 		}
 
 		private float ClampTime (float time)

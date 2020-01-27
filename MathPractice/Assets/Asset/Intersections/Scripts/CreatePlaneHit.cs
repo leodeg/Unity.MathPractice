@@ -44,11 +44,11 @@ namespace LeoDeg.Intersactions
 
 		private void InitializeVariables ()
 		{
-			plane = new Math.Plane (planeStart.position.ToCoords (),
-												planeFirstVector.position.ToCoords (),
-												planeSecondVector.position.ToCoords ());
-			trajectory = new Line (lineStart.position.ToCoords (),
-							lineEnd.position.ToCoords (),
+			plane = new Math.Plane (planeStart.position.ToVector (),
+												planeFirstVector.position.ToVector (),
+												planeSecondVector.position.ToVector ());
+			trajectory = new Line (lineStart.position.ToVector (),
+							lineEnd.position.ToVector (),
 							Line.LineType.Segment);
 			trajectory.Draw (0.3f, Color.green);
 		}
@@ -93,7 +93,7 @@ namespace LeoDeg.Intersactions
 
 		void Update ()
 		{
-			float distanceToIntersection = Math.Math.Distance (ball.transform.position.ToCoords (), intersectionVector.ToCoords ());
+			float distanceToIntersection = Math.Math.Distance (ball.transform.position.ToVector (), intersectionVector.ToVector ());
 			if (distanceToIntersection > stopBallDistance)
 			{
 				Vector3 direction = intersectionVector - ball.transform.position;

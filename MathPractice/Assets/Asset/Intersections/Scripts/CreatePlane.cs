@@ -18,9 +18,9 @@ namespace LeoDeg.Intersactions
 
 		void Start ()
 		{
-			plane = new Math.Plane (new Coords (start.position),
-				new Coords (firstVector.position),
-				new Coords (secondVector.position));
+			plane = new Math.Plane (new Vector (start.position),
+				new Vector (firstVector.position),
+				new Vector (secondVector.position));
 
 			spheresParent = new GameObject ("SpheresParent");
 			spheresParent.transform.parent = this.transform;

@@ -16,15 +16,15 @@ namespace LeoDeg.Intersactions
 
 		private void CreateIntersectedLines ()
 		{
-			first = new Line (new Coords (-100, 0, 0), new Coords (200, 150, 0));
-			second = new Line (new Coords (0, -100, 0), new Coords (0, 200, 0));
+			first = new Line (new Vector (-100, 0, 0), new Vector (200, 150, 0));
+			second = new Line (new Vector (0, -100, 0), new Vector (0, 200, 0));
 			DrawLinesAndIntersection ();
 		}
 
 		private void CreateParallelLines ()
 		{
-			first = new Line (new Coords (-100, 0, 0), new Coords (200, 150, 0));
-			second = new Line (new Coords (-100, 10, 0), new Coords (200, 150, 0));
+			first = new Line (new Vector (-100, 0, 0), new Vector (200, 150, 0));
+			second = new Line (new Vector (-100, 10, 0), new Vector (200, 150, 0));
 			DrawLinesAndIntersection ();
 		}
 

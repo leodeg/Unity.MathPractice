@@ -38,8 +38,8 @@ public class CreateTennisGame : MonoBehaviour
 
 	private void DrawGameMap ()
 	{
-		road = new Line (new Coords (0, 0, 0), new Coords (20, 0, 0));
-		wall = new Line (new Coords (10, -5, 0), new Coords (0, 10, 0));
+		road = new Line (new Vector (0, 0, 0), new Vector (20, 0, 0));
+		wall = new Line (new Vector (10, -5, 0), new Vector (0, 10, 0));
 
 		road.Draw (0.3f, Color.yellow).transform.parent = this.transform;
 		wall.Draw (1f, Color.blue).transform.parent = this.transform;
@@ -66,7 +66,7 @@ public class CreateTennisGame : MonoBehaviour
 
 	private void MoveTennisBallToIntersectionPosition ()
 	{
-		float distanceToIntersection = Math.Distance (tennisBall.transform.position.ToCoords (), movingVector.ToCoords ());
+		float distanceToIntersection = Math.Distance (tennisBall.transform.position.ToVector (), movingVector.ToVector ());
 		if (distanceToIntersection > stopTennisBallDistance)
 		{
 			Debug.Log ("Distance to intersection: " + distanceToIntersection);
@@ -74,7 +74,7 @@ public class CreateTennisGame : MonoBehaviour
 		}
 		else
 		{
-			movingVector = road.Reflect (Coords.Perp (wall.Direction).Normal ()).ToVector3 ();
+			movingVector = road.Reflect (Vector.Perp (wall.Direction).Normal ()).ToVector3 ();
 			tennisBall.transform.position += movingVector * Time.deltaTime;
 		}
 	}

@@ -4,22 +4,22 @@ using UnityEngine;
 
 namespace LeoDeg.Math
 {
-	public class Coords
+	public class Vector
 	{
-		public static readonly Coords zero = new Coords (0, 0, 0);
-		public static readonly Coords up = new Coords (0, 1, 0);
-		public static readonly Coords down = new Coords (0, -1, 0);
-		public static readonly Coords right = new Coords (1, 0, 0);
-		public static readonly Coords left = new Coords (-1, 0, 0);
-		public static readonly Coords forward = new Coords (0, 0, 1);
-		public static readonly Coords backward = new Coords (0, 0, -1);
+		public static readonly Vector zero = new Vector (0, 0, 0);
+		public static readonly Vector up = new Vector (0, 1, 0);
+		public static readonly Vector down = new Vector (0, -1, 0);
+		public static readonly Vector right = new Vector (1, 0, 0);
+		public static readonly Vector left = new Vector (-1, 0, 0);
+		public static readonly Vector forward = new Vector (0, 0, 1);
+		public static readonly Vector backward = new Vector (0, 0, -1);
 
 		public float X { get; set; }
 		public float Y { get; set; }
 		public float Z { get; set; }
 		public float W { get; set; }
 
-		public Coords (float _X, float _Y)
+		public Vector (float _X, float _Y)
 		{
 			X = _X;
 			Y = _Y;
@@ -27,7 +27,7 @@ namespace LeoDeg.Math
 			W = 0;
 		}
 
-		public Coords (float _X, float _Y, float _Z)
+		public Vector (float _X, float _Y, float _Z)
 		{
 			X = _X;
 			Y = _Y;
@@ -35,7 +35,7 @@ namespace LeoDeg.Math
 			W = 0;
 		}
 
-		public Coords (float _X, float _Y, float _Z, float _W)
+		public Vector (float _X, float _Y, float _Z, float _W)
 		{
 			X = _X;
 			Y = _Y;
@@ -43,7 +43,7 @@ namespace LeoDeg.Math
 			W = _W;
 		}
 
-		public Coords (Vector3 vecpos)
+		public Vector (Vector3 vecpos)
 		{
 			X = vecpos.x;
 			Y = vecpos.y;
@@ -52,53 +52,53 @@ namespace LeoDeg.Math
 		}
 
 
-		public Coords Normal ()
+		public Vector Normal ()
 		{
-			float magnitude = Math.Distance (Coords.zero, this);
-			return new Coords (X / magnitude, Y / magnitude, Z / magnitude);
+			float magnitude = Math.Distance (Vector.zero, this);
+			return new Vector (X / magnitude, Y / magnitude, Z / magnitude);
 		}
 
-		public static Coords Perp (Coords vector)
+		public static Vector Perp (Vector vector)
 		{
-			return new Coords (vector.Y, -vector.X);
+			return new Vector (vector.Y, -vector.X);
 		}
 
-		public static Coords operator / (Coords a, float value)
+		public static Vector operator / (Vector a, float value)
 		{
-			return new Coords (a.X / value, a.Y / value, a.Z / value);
+			return new Vector (a.X / value, a.Y / value, a.Z / value);
 		}
 
-		public static Coords operator * (Coords a, float value)
+		public static Vector operator * (Vector a, float value)
 		{
-			return new Coords (a.X * value, a.Y * value, a.Z * value);
+			return new Vector (a.X * value, a.Y * value, a.Z * value);
 		}
 
-		public static Coords operator * (float value, Coords a)
+		public static Vector operator * (float value, Vector a)
 		{
-			return new Coords (a.X * value, a.Y * value, a.Z * value);
+			return new Vector (a.X * value, a.Y * value, a.Z * value);
 		}
 
-		public static Coords operator * (Coords a, Coords b)
+		public static Vector operator * (Vector a, Vector b)
 		{
-			return new Coords (a.X * b.X, a.Y * b.Y, a.Z * b.Z);
+			return new Vector (a.X * b.X, a.Y * b.Y, a.Z * b.Z);
 		}
 
-		public static Coords operator + (Coords a, Coords b)
+		public static Vector operator + (Vector a, Vector b)
 		{
-			return new Coords (a.X + b.X, a.Y + b.Y, a.Z + b.Z);
+			return new Vector (a.X + b.X, a.Y + b.Y, a.Z + b.Z);
 		}
 
-		public static Coords operator - (Coords a, Coords b)
+		public static Vector operator - (Vector a, Vector b)
 		{
-			return new Coords (a.X - b.X, a.Y - b.Y, a.Z - b.Z);
+			return new Vector (a.X - b.X, a.Y - b.Y, a.Z - b.Z);
 		}
 
-		public static bool operator == (Coords a, Coords b)
+		public static bool operator == (Vector a, Vector b)
 		{
 			return a.X == b.X && a.Y == b.Y && a.Z == b.Z;
 		}
 
-		public static bool operator != (Coords a, Coords b)
+		public static bool operator != (Vector a, Vector b)
 		{
 			return !(a == b);
 		}
@@ -122,6 +122,14 @@ namespace LeoDeg.Math
 		public Vector3 ToVector3 ()
 		{
 			return new Vector3 (X, Y, Z);
+		}
+
+		/// <summary>
+		/// Return a new vector with converted values from degrees to radians.
+		/// </summary>
+		public Vector Deg2Rad ()
+		{
+			return new Vector (X * Mathf.Deg2Rad, Y * Mathf.Deg2Rad, Z * Mathf.Deg2Rad);
 		}
 
 		/// <summary>
@@ -164,7 +172,7 @@ namespace LeoDeg.Math
 			return "(" + X + "," + Y + "," + Z + ")";
 		}
 
-		public static GameObject DrawLine (Coords startPoint, Coords endPoint, float width, Color colour)
+		public static GameObject DrawLine (Vector startPoint, Vector endPoint, float width, Color colour)
 		{
 			GameObject line = new GameObject ("Line_" + startPoint.ToString () + "_" + endPoint.ToString ());
 			LineRenderer lineRenderer = line.AddComponent<LineRenderer> ();
@@ -178,7 +186,7 @@ namespace LeoDeg.Math
 			return line;
 		}
 
-		public static GameObject DrawPoint (Coords position, float width, Color colour)
+		public static GameObject DrawPoint (Vector position, float width, Color colour)
 		{
 			GameObject line = new GameObject ("Point_" + position.ToString ());
 			LineRenderer lineRenderer = line.AddComponent<LineRenderer> ();

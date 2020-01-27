@@ -22,6 +22,13 @@ namespace LeoDeg.Math
 			ColumnsCount = matrix.ColumnsCount;
 		}
 
+		public Matrix (int rowsCount, int columnsCount)
+		{
+			this.values = new float[rowsCount * columnsCount];
+			RowsCount = rowsCount;
+			ColumnsCount = columnsCount;
+		}
+
 		public Matrix (int rowsCount, int columnsCount, float[] values)
 		{
 			this.values = values;
@@ -71,6 +78,55 @@ namespace LeoDeg.Math
 			}
 		}
 
+		public static Matrix operator + (Matrix a, Matrix b)
+		{
+			if (a.Size != b.Size)
+				throw new InvalidOperationException ("Matrix::Error::Matrices have a different sizes.");
+
+			Matrix result = new Matrix (a.RowsCount, a.ColumnsCount, a.values);
+			for (int i = 0; i < a.Size; i++)
+				result.values[i] += b.values[i];
+			return result;
+		}
+
+		public static Matrix operator * (float value, Matrix a)
+		{
+			return a * value;
+		}
+
+		public static Matrix operator * (Matrix a, float value)
+		{
+			Matrix result = new Matrix (a.RowsCount, a.ColumnsCount, a.values);
+			for (int i = 0; i < a.Size; i++)
+				result.values[i] *= value;
+			return result;
+		}
+
+		public static Matrix operator * (Matrix a, Matrix b)
+		{
+			if (a.ColumnsCount != b.RowsCount)
+				throw new InvalidOperationException ("Matrix::Error::Matrices sizes is wrong for multiplication.");
+
+			Matrix resultPosition = new Matrix (a.RowsCount, b.ColumnsCount);
+			for (int i = 0; i < a.RowsCount; i++)
+				for (int j = 0; j < b.ColumnsCount; j++)
+					for (int k = 0; k < a.ColumnsCount; k++)
+						resultPosition[i, j] += a[i, k] * b[k, j];
+
+			return resultPosition;
+		}
+
+		public static Matrix GetReflectMatrix ()
+		{
+			float[] reflectValues = {
+				-1, 0, 0, 0,
+				0, 1, 0, 0,
+				0, 0, 1, 0,
+				0, 0, 0, 1
+			};
+			return new Matrix (4, 4, reflectValues);
+		}
+
 		public float[] To1DArray ()
 		{
 			return values;
@@ -87,56 +143,78 @@ namespace LeoDeg.Math
 			return values;
 		}
 
-		public Coords ToCoords ()
+		/// <summary>
+		/// Return vector2, vector3 or vector4.
+		/// </summary>
+		public Vector ToVector ()
 		{
-			if ((RowsCount == 2 && ColumnsCount == 1) || (ColumnsCount == 2 && RowsCount == 1))
-				return new Coords (values[0], values[1]);
+			if ((RowsCount == 2 && ColumnsCount == 1) || (RowsCount == 1 && ColumnsCount == 2))
+				return new Vector (values[0], values[1]);
 
-			if ((RowsCount == 3 && ColumnsCount == 1) || (ColumnsCount == 3 && RowsCount == 1))
-				return new Coords (values[0], values[1], values[2]);
+			if ((RowsCount == 3 && ColumnsCount == 1) || (RowsCount == 1 && ColumnsCount == 3))
+				return new Vector (values[0], values[1], values[2]);
 
-			if ((RowsCount == 4 && ColumnsCount == 1) || (ColumnsCount == 4 && RowsCount == 1))
-				return new Coords (values[0], values[1], values[2], values[3]);
+			if ((RowsCount == 4 && ColumnsCount == 1) || (RowsCount == 1 && ColumnsCount == 4))
+				return new Vector (values[0], values[1], values[2], values[3]);
 
-			throw new InvalidOperationException ("Matrix cannot be casted to Coords type. Rows count: " + RowsCount + ", Columns count: " + ColumnsCount);
+			throw new InvalidOperationException ("Matrix::Error::Matrix cannot be casted to Coords type. Rows count: " + RowsCount + ", Columns count: " + ColumnsCount);
 		}
 
-		public static Matrix operator + (Matrix a, Matrix b)
+		/// <summary>
+		/// If matrix size 1x2 or 2x1 return true.
+		/// </summary>
+		public bool IsVector2 ()
 		{
-			if (a.Size != b.Size)
-				throw new InvalidOperationException ("Matrix::Error::Matrices have a different sizes.");
-
-			Matrix result = new Matrix (a.RowsCount, a.ColumnsCount, a.values);
-			for (int i = 0; i < a.Size; i++)
-				result.values[i] += b.values[i];
-			return result;
+			return (RowsCount == 2 && ColumnsCount == 1) || (RowsCount == 1 && ColumnsCount == 2);
 		}
 
-		public static Matrix operator * (Matrix a, float value)
+		/// <summary>
+		/// If matrix size 1x3 or 3x1 return true.
+		/// </summary>
+		public bool IsVector3 ()
 		{
-			Matrix result = new Matrix (a.RowsCount, a.ColumnsCount, a.values);
-			for (int i = 0; i < a.Size; i++)
-				result.values[i] *= value;
-			return result;
+			return (RowsCount == 3 && ColumnsCount == 1) || (RowsCount == 1 && ColumnsCount == 3);
 		}
 
-		public static Matrix operator * (float value, Matrix a)
+		/// <summary>
+		/// If matrix size 1x4 or 4x1 return true.
+		/// </summary>
+		public bool IsVector4 ()
 		{
-			return a * value;
+			return (RowsCount == 4 && ColumnsCount == 1) || (RowsCount == 1 && ColumnsCount == 4);
 		}
 
-		public static Matrix operator * (Matrix a, Matrix b)
+		/// <summary>
+		/// If matrix size 1x2 or 2x1 return x and y.
+		/// </summary>
+		public Vector ToVector2 ()
 		{
-			if (a.ColumnsCount != b.RowsCount)
-				throw new InvalidOperationException ("Matrix::Error::Matrices sizes is wrong for multiplication.");
+			if ((RowsCount == 2 && ColumnsCount == 1) || (RowsCount == 1 && ColumnsCount == 2))
+				return new Vector (values[0], values[1]);
 
-			Matrix results = new Matrix (a.RowsCount, b.ColumnsCount, new float[a.RowsCount * b.ColumnsCount]);
-			for (int i = 0; i < a.RowsCount; i++)
-				for (int j = 0; j < b.ColumnsCount; j++)
-					for (int k = 0; k < a.ColumnsCount; k++)
-						results[i, j] += a[i, k] * b[k, j];
+			throw new InvalidOperationException ("Matrix::Error::Matrix cannot be casted to Vector2 type. Rows count: " + RowsCount + ", Columns count: " + ColumnsCount);
+		}
 
-			return results;
+		/// <summary>
+		/// If matrix size 1x3 or 3x1 return x,y and z.
+		/// </summary>
+		public Vector ToVector3 ()
+		{
+			if ((RowsCount == 3 && ColumnsCount == 1) || (RowsCount == 1 && ColumnsCount == 3))
+				return new Vector (values[0], values[1], values[2]);
+
+			throw new InvalidOperationException ("Matrix::Error::Matrix cannot be casted to Vector3 type. Rows count: " + RowsCount + ", Columns count: " + ColumnsCount);
+		}
+
+		/// <summary>
+		/// If matrix size 1x4 or 4x1 return x, y, z and w.
+		/// </summary>
+		public Vector ToVector4 ()
+		{
+			if ((RowsCount == 4 && ColumnsCount == 1) || (RowsCount == 1 && ColumnsCount == 4))
+				return new Vector (values[0], values[1], values[2], values[3]);
+
+			throw new InvalidOperationException ("Matrix::Error::Matrix cannot be casted to Vector4 type. Rows count: " + RowsCount + ", Columns count: " + ColumnsCount);
 		}
 
 		public override string ToString ()

@@ -3,9 +3,9 @@ using UnityEngine;
 
 public static class ExtensionsMethods
 {
-	public static Coords ToCoords (this Vector3 vector)
+	public static Vector ToVector (this Vector3 vector)
 	{
-		return new Coords (vector.x, vector.y, vector.z);
+		return new Vector (vector.x, vector.y, vector.z);
 	}
 
 }

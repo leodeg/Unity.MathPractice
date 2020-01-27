@@ -124,10 +124,12 @@ namespace HolMath
 
 		static public Coords Shear (Coords position, float shearX, float shearY, float shearZ)
 		{
-			float[] shearValues = {1,shearY,0,0,
-							   0, 1, 0, 0,
-							   0, 0, 1, 0,
-							   0, 0, 0, 1 };
+			float[] shearValues = {
+				1,shearY,0,0,
+				0, 1, 0, 0,
+				0, 0, 1, 0,
+				0, 0, 0, 1
+			};
 			Matrix shearMatrix = new Matrix (4, 4, shearValues);
 			Matrix pos = new Matrix (4, 1, position.AsFloats ());
 
