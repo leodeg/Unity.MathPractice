@@ -10,9 +10,10 @@ namespace LeoDeg.Math
 		static public Vector GetNormal (Vector vector)
 		{
 			float length = Distance (vector, new Vector (0, 0, 0));
-			vector.X /= length;
-			vector.Y /= length;
-			vector.Z /= length;
+			float multiplier = 1.0f / length;
+			vector.X *= multiplier;
+			vector.Y *= multiplier;
+			vector.Z *= multiplier;
 
 			return vector;
 		}
@@ -98,15 +99,15 @@ namespace LeoDeg.Math
 
 		static public Vector Translate (Vector position, Vector facing, Vector vector)
 		{
-			if (Math.Distance (vector, new Vector (0, 0, 0)) <= 0) return position;
-			float angle = Math.Angle (vector, facing);
-			float worldAngle = Math.Angle (vector, new Vector (0, 1, 0));
+			if (Distance (vector, new Vector (0, 0, 0)) <= 0) return position;
+			float angle = Angle (vector, facing);
+			float worldAngle = Angle (vector, new Vector (0, 1, 0));
 
 			bool clockwise = false;
-			if (Math.Cross (vector, facing).Z < 0)
+			if (Cross (vector, facing).Z < 0)
 				clockwise = true;
 
-			vector = Math.Rotate (vector, angle + worldAngle, clockwise);
+			vector = Rotate (vector, angle + worldAngle, clockwise);
 			return new Vector (
 				position.X + vector.X,
 				position.Y + vector.Y,
@@ -118,7 +119,6 @@ namespace LeoDeg.Math
 			if (Math.Distance (vector, new Vector (0, 0, 0)) <= 0) return start;
 			return start + vector;
 		}
-
 
 		static public Vector Translate (Vector position, float x, float y, float z)
 		{
@@ -149,6 +149,13 @@ namespace LeoDeg.Math
 
 		public static Vector Rotate (Vector position, float angleXRad, bool clockwiseX, float angleYRad, bool clockwiseY, float angleZRad, bool clockwiseZ)
 		{
+			Matrix rotationMatrix = GetRotationMatrix (angleXRad, clockwiseX, angleYRad, clockwiseY, angleZRad, clockwiseZ);
+			Matrix result = rotationMatrix * position.ToMatrix ();
+			return result.ToVector4 ();
+		}
+
+		public static Matrix GetRotationMatrix (float angleXRad, bool clockwiseX, float angleYRad, bool clockwiseY, float angleZRad, bool clockwiseZ)
+		{
 			if (clockwiseX) angleXRad = (2 * Mathf.PI) - angleXRad;
 			if (clockwiseY) angleYRad = (2 * Mathf.PI) - angleYRad;
 			if (clockwiseZ) angleZRad = (2 * Mathf.PI) - angleZRad;
@@ -170,16 +177,15 @@ namespace LeoDeg.Math
 			float[] zRollValues = {
 				Mathf.Cos(angleZRad), -Mathf.Sin(angleZRad),0,0,
 				Mathf.Sin(angleZRad), Mathf.Cos(angleZRad),0,0,
-				0,0,1,0,
-				0,0,0,1
+				0, 0, 1, 0,
+				0, 0, 0, 1
 			};
 
 			Matrix xRoll = new Matrix (4, 4, xRollValues);
 			Matrix yRoll = new Matrix (4, 4, yRollValues);
 			Matrix zRoll = new Matrix (4, 4, zRollValues);
 
-			Matrix result = zRoll * yRoll * xRoll * position.ToMatrix ();
-			return result.ToVector4 ();
+			return zRoll * yRoll * xRoll;
 		}
 
 		public static Vector Shear (Vector position, Vector shearValues)
@@ -191,15 +197,30 @@ namespace LeoDeg.Math
 		{
 			float[] shearValues =
 			{
-				1, shearX, 0,0,
-				0, 1, shearY,0,
-				0,shearZ,1,0,
-				0,0,0,1
+				1, shearX, 0, 0,
+				0, 1, shearY, 0,
+				0,shearZ, 1, 0,
+				0, 0, 0, 1
 			};
 
 			Matrix shearMatrix = new Matrix (4, 4, shearValues);
 			Matrix result = shearMatrix * position.ToMatrix ();
 			return result.ToVector4 ();
+		}
+
+		public static Vector ReflectX (Vector position)
+		{
+			return Reflect (position, true, false, false);
+		}
+
+		public static Vector ReflectY (Vector position)
+		{
+			return Reflect (position, false, true, false);
+		}
+
+		public static Vector ReflectZ (Vector position)
+		{
+			return Reflect (position, false, false, true);
 		}
 
 		public static Vector Reflect (Vector position, bool reflectX, bool reflectY, bool reflectZ)
@@ -220,6 +241,30 @@ namespace LeoDeg.Math
 			Matrix reflectionMatrix = new Matrix (4, 4, reflectValues);
 			Matrix result = reflectionMatrix * position.ToMatrix ();
 			return result.ToVector4 ();
+		}
+
+		static public Vector QuaternionRotation (Vector position, Vector axis, float angleDegrees)
+		{
+			Matrix quaternionMatrix = GetQuaternionRotationMatrix (axis, angleDegrees);
+			Matrix result = quaternionMatrix * position.ToMatrix ();
+			return result.ToVector4 ();
+		}
+
+		static public Matrix GetQuaternionRotationMatrix (Vector axis, float angleDegrees)
+		{
+			Vector axisNormal = axis.Normal ();
+			float cos = Mathf.Cos (angleDegrees * Mathf.Deg2Rad / 2);
+			float sin = Mathf.Sin (angleDegrees * Mathf.Deg2Rad / 2);
+			Vector q = new Vector (axisNormal.X * sin, axisNormal.Y * sin, axisNormal.Z * sin, cos);
+
+			float[] quaternionValues = {
+				1 - 2*q.Y*q.Y - 2*q.Z*q.Z, 2*q.X*q.Y - 2*q.W*q.Z,      2*q.X*q.Z + 2*q.W*q.Y,     0,
+				2*q.X*q.Y + 2*q.W*q.Z,     1 - 2*q.X*q.X - 2*q.Z*q.Z,  2*q.Y*q.Z - 2*q.W*q.X,     0,
+				2*q.X*q.Z - 2*q.W*q.Y,     2*q.Y*q.Z + 2*q.W*q.X,      1 - 2*q.X*q.X - 2*q.Y*q.Y, 0,
+				0,                         0,                          0,                         1
+			};
+
+			return new Matrix (4, 4, quaternionValues);
 		}
 
 		#endregion

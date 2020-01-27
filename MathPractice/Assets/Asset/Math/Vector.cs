@@ -55,7 +55,8 @@ namespace LeoDeg.Math
 		public Vector Normal ()
 		{
 			float magnitude = Math.Distance (Vector.zero, this);
-			return new Vector (X / magnitude, Y / magnitude, Z / magnitude);
+			float multiplier = 1.0f / magnitude;
+			return new Vector (X * multiplier, Y * multiplier, Z * multiplier);
 		}
 
 		public static Vector Perp (Vector vector)
@@ -65,7 +66,8 @@ namespace LeoDeg.Math
 
 		public static Vector operator / (Vector a, float value)
 		{
-			return new Vector (a.X / value, a.Y / value, a.Z / value);
+			float multiplier = 1.0f / value;
+			return new Vector (a.X * multiplier, a.Y * multiplier, a.Z * multiplier);
 		}
 
 		public static Vector operator * (Vector a, float value)
