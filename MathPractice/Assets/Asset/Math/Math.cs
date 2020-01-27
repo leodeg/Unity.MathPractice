@@ -267,6 +267,24 @@ namespace LeoDeg.Math
 			return new Matrix (4, 4, quaternionValues);
 		}
 
+		static public float GetRotationAxisAngle (Matrix rotation)
+		{
+			float value = rotation[0, 0] + rotation[1, 1] + rotation[2, 2] + rotation[3, 3] - 2;
+			return Mathf.Acos (0.5f * value);
+		}
+
+		static public Vector GetRotationAxis (Matrix rotation, float angle)
+		{
+			float sin = 2 * Mathf.Sin (angle);
+			float multiplier = 1.0f / sin;
+
+			return new Vector (
+				(rotation[2, 1] - rotation[1, 2]) * multiplier,
+				(rotation[0, 2] - rotation[2, 0]) * multiplier,
+				(rotation[1, 0] - rotation[0, 1]) * multiplier
+			);
+		}
+
 		#endregion
 	}
 }

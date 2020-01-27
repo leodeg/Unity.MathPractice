@@ -257,8 +257,8 @@ namespace HolMath
 			float angle = 0;
 			angle = Mathf.Acos (0.5f * (rotation.GetValue (0, 0) +
 										rotation.GetValue (1, 1) +
-											rotation.GetValue (2, 2) +
-											   rotation.GetValue (3, 3) - 2));
+										rotation.GetValue (2, 2) +
+										rotation.GetValue (3, 3) - 2));
 			return angle;
 		}
 
